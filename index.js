@@ -10,7 +10,7 @@ import { createSpinner } from 'nanospinner';
 let playerName;
 let questionCount = 0;
 
-// Time function
+// Timer
 const sleep = (ms = 2000) => {
 	return new Promise((r) => {
 		return setTimeout(r, ms);
@@ -18,13 +18,11 @@ const sleep = (ms = 2000) => {
 };
 
 async function welcome() {
-	// Initializing startup text animation
 	const rainbowTitle = chalkAnimation.rainbow('Who Wants To Be A Millionaire?');
 
 	await sleep();
 	rainbowTitle.stop();
 
-	// Outlining game plan
 	console.log(`
 	  ${chalk.bgCyanBright(' HOW TO PLAY ')}
 	  I am a process on your computer.
@@ -33,7 +31,6 @@ async function welcome() {
 	`);
 }
 
-// Getting player's name or resorting to a default if not available
 async function askName() {
 	const answers = await inquirer.prompt({
 		name: 'player_name',
@@ -44,7 +41,6 @@ async function askName() {
 		},
 	});
 
-	// Getting player name
 	playerName = answers.player_name;
 }
 
@@ -66,12 +62,11 @@ async function question1() {
 }
 
 async function answerHandler(isCorrect, message) {
-	let failureMsg = `${chalk.redBright(
-		' 💀 💀 💀 ',
-	)} Game over ${playerName}. you lost`;
+	let failureMsg = `💀 💀 💀 Game over ${playerName}. you lost`;
 
 	const spinner = createSpinner('Checking answer....').start();
 	await sleep();
+
 	if (isCorrect) {
 		spinner.success({ text: message });
 	} else {
@@ -80,7 +75,19 @@ async function answerHandler(isCorrect, message) {
 	}
 }
 
+async function winner() {
+	await sleep();
+	console.clear();
+	let successMsg = `Congrats ${playerName} !.\n You just won  $1, 000 ,000 `;
+	figlet(successMsg, (err, data) => {
+		if (!err) {
+			console.log(gradient.pastel.multiline(data));
+		}
+	});
+}
+
 console.clear();
 await welcome();
 await askName();
 await question1();
+await winner();
